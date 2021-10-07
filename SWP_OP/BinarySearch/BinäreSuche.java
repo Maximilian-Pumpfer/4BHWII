@@ -5,8 +5,8 @@ import java.util.stream.IntStream;
 
 public class BinäreSuche{
 
-    static int[] werte;
-    static int gesuchteZahl;
+    private static int[] werte;
+    private static int gesuchteZahl;
 
     public static void main(String[] args) {
         
@@ -17,7 +17,7 @@ public class BinäreSuche{
             BinarySearch(werte, gesuchteZahl);
 
     }
-
+    
     private static int randomAmount(){
     	
     	Random random = new Random();
