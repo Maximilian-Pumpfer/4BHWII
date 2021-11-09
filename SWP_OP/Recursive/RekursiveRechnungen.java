@@ -18,14 +18,17 @@ public class RekursiveRechnungen {
         right = true;
         System.out.println("Anzahl:");
         int amount = Integer.parseInt(s.nextLine());
+
         long t1 = System.nanoTime();
         System.out.print("Iterativ: " + IterSum(amount));
         long t2 = System.nanoTime();
         System.out.println("\tZeit: " + ((t2-t1)/1000) + "ms");
+
         long t3 = System.nanoTime();
         System.out.print("Rekursiv: " + RecSum(amount));
         long t4 = System.nanoTime();
         System.out.println("\tZeit: " + ((t4-t3)/1000) + "ms");
+
         long t5 = System.nanoTime();
         System.out.print("End-Rekursiv: " + EndRecSum(0, amount));
         long t6 = System.nanoTime();
@@ -37,10 +40,12 @@ public class RekursiveRechnungen {
         int num = Integer.parseInt(s.nextLine());
         System.out.println("Potenz:");
         int amount = Integer.parseInt(s.nextLine());
+        
         long t1 = System.nanoTime();
         System.out.print("Rekursiv: " + RecPow(num, amount));
         long t2 = System.nanoTime();
         System.out.println("\tZeit: " + ((t2-t1)/1000) + "ms");
+
         long t3 = System.nanoTime();
         System.out.print("End-Rekursiv: " + EndRecPow(num, num, amount));
         long t4 = System.nanoTime();
