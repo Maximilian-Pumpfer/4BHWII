@@ -22,17 +22,17 @@ public class RekursiveRechnungen {
         long t1 = System.nanoTime();
         System.out.print("Iterativ: " + IterSum(amount));
         long t2 = System.nanoTime();
-        System.out.println("\tZeit: " + ((t2-t1)/1000) + "ms");
+        System.out.println("\tZeit: " + ((t2-t1)/1000) + "µs");
 
         long t3 = System.nanoTime();
         System.out.print("Rekursiv: " + RecSum(amount));
         long t4 = System.nanoTime();
-        System.out.println("\tZeit: " + ((t4-t3)/1000) + "ms");
+        System.out.println("\tZeit: " + ((t4-t3)/1000) + "µs");
 
         long t5 = System.nanoTime();
         System.out.print("End-Rekursiv: " + EndRecSum(0, amount));
         long t6 = System.nanoTime();
-        System.out.println("\tZeit: " + ((t6-t5)/1000) + "ms");
+        System.out.println("\tZeit: " + ((t6-t5)/1000) + "µs");
        }
        if(ans.equals("Potenz")){
            right = true;
@@ -44,12 +44,12 @@ public class RekursiveRechnungen {
         long t1 = System.nanoTime();
         System.out.print("Rekursiv: " + RecPow(num, amount));
         long t2 = System.nanoTime();
-        System.out.println("\tZeit: " + ((t2-t1)/1000) + "ms");
+        System.out.println("\tZeit: " + ((t2-t1)/1000) + "µs");
 
         long t3 = System.nanoTime();
         System.out.print("End-Rekursiv: " + EndRecPow(num, num, amount));
         long t4 = System.nanoTime();
-        System.out.println("\tZeit: " + ((t4-t3)/1000) + "ms");
+        System.out.println("\tZeit: " + ((t4-t3)/1000) + "µs");
        }
        if(right == false){
            System.out.println("Eingabe ist falsch, bitte erneut eingeben!");
