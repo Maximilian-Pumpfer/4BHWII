@@ -1,8 +1,10 @@
 import json
 from flask_restful import Api
 #from model import Question, getRandomQuestion, getData, Service, AllQuests, getQuests
-from rest import MusicInfo, Service
+from rest import MusicInfo, Service, getMusicInfo
 from flask import Flask, render_template, session
+
+
 
 app = Flask(__name__)
 app.secret_key = "epjsmp2021/22"
@@ -14,10 +16,10 @@ def start():
 
 @app.route('/songs')
 def showSongs():
-    return render_template("songs.html", songs = getSongs())
+    return render_template("songs.html", songs = getMusicInfo())
 
-@app.route('/panel')
-@app.route('/panel/<string:song>')
+@app.route('/play')
+@app.route('/play/<string:id>')
 def panel():
     return render_template("startseite.html")
 
