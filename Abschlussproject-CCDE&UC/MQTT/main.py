@@ -36,7 +36,10 @@ def on_connect(client, userdata, flags, rc, properties=None):
 allSongs = []
 
 def on_message(client, userdata, msg):
-    received = msg.payload.decode("utf-8").split("-");
+    time.sleep(1)
+    received = msg.payload.decode("utf-8").split("-")
+    print("asd")
+    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-play-The passenger Iggy Pop.mp3", qos=1)
     if(received[0] != "main"):
         print(received[0] + ": " + received[1])
         received[1].replace("[", "")
@@ -45,6 +48,7 @@ def on_message(client, userdata, msg):
         allSongs = received[1].split(",")
         for s in allSongs:
             print(s)
+            
 # def on_log(client,userdata,level,buff):
 #     print(buff)  
 
@@ -69,8 +73,9 @@ client.on_message = on_message
 
 # subscribe to all topics of encyclopedia by using the wildcard "#"
 client.subscribe("pro/music", qos=1)
+time.sleep(3)
 # a single publish, this can also be done in loops, etc.
-client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-play-Everything_Black.mp3", qos=1)
+client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)
 
 def isFloat(num):
     try:
@@ -81,11 +86,8 @@ def isFloat(num):
 
 while True:
     i = input("Input: ")
-    if(i == "stop"):
-        client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-stop", qos=1)
-        break
-    elif(i == "play"):
-        client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-" + i, qos=1)
+    if(i == "play-Everything_Black"):
+        client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-" + i + ".mp3", qos=1)     
     elif(i == "pause"):
         client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-pause", qos=1)
     elif(i == "unpause"):
@@ -94,7 +96,7 @@ while True:
         client.publish("pro/music", payload=client._client_id.decode("utf-8") + i, qos=1)
         print("volume changed")
     else:
-        print("sei ned deppat, dua gscheid")
+        print("input wrong!")
     
 
 # loop_forever for simplicity, here you need to stop the loop manually
