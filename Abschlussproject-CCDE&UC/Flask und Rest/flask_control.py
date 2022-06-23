@@ -8,8 +8,7 @@ from pygame import mixer
 import time
 import paho.mqtt.client as paho
 from paho import mqtt
-
-   
+  
 #
 # Copyright 2021 HiveMQ GmbH
 #
@@ -149,6 +148,8 @@ def unpause():
     client.loop_stop()
     #mixer.music.unpause()
     return render_template("play.html")  
+
+#TODO: Sound ändern einfügen
 
 api.add_resource(Service, "/rest/<int:id>")
 
