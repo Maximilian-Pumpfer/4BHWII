@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
+from pydoc import cli
 import time
 from urllib.parse import urlparse
 import paho.mqtt.client as paho
@@ -69,12 +70,6 @@ client.connect("cbe265c6cda342daa94ba67720ef1767.s2.eu.hivemq.cloud", 8883)
 client.on_message = on_message
 # client.on_publish = on_publish
 # client.on_log = on_log
-
-# subscribe to all topics of encyclopedia by using the wildcard "#"
-client.subscribe("pro/music", qos=1)
-# a single publish, this can also be done in loops, etc.
-client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)
-
 def isFloat(num):
     try:
         float(num)
@@ -84,22 +79,24 @@ def isFloat(num):
 
 def runInputs(temp, songs):
     while temp == True:
-        print(songs)
         i = input("Input: ")
-        
         if(i in songs):
-            client.publish("pro/music", payload=client._client_id.decode("utf-8") + "play-" + i + ".mp3", qos=1)
+            client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-play-" + i + ".mp3", qos=1)
         elif(i == "pause"):
+            client.loop_start()
             client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-pause", qos=1)
+            client.loop_stop()
         elif(i == "unpause"):
             client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-unpause", qos=1)
         elif(isFloat(i)):
-            client.publish("pro/music", payload=client._client_id.decode("utf-8") + i, qos=1)
+            client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-" + i, qos=1)
             print("volume changed")
         else:
             print("input wrong!")
-    
+# subscribe to all topics of encyclopedia by using the wildcard "#"
+client.subscribe("pro/music", qos=1)
+# a single publish, this can also be done in loops, etc.
 
-# loop_forever for simplicity, here you need to stop the loop manually
-# you can also use loop_start and loop_stop
+client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)
+
 client.loop_forever()
