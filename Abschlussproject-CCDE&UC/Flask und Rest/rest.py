@@ -25,7 +25,7 @@ db_session = scoped_session(sessionmaker(autocommit=True, autoflush=True, bind=e
 Base.query = db_session.query_property
 
 
-def getMusicInfo():
+def getMusicInfoLocal():
     id = 1
     music = []
     for x in os.listdir():#Kann auch anderen Path eintragen, vllt wenn auf Raspberry, umändern
@@ -38,6 +38,16 @@ def getMusicInfo():
             music.append(m)
             id+=1
     return music
+
+
+def getMusicInfo(music):
+    id = 1
+    musicInfos=[]
+    for x in music:  # Kann auch anderen Path eintragen, vllt wenn auf Raspberry, umändern
+        m = MusicInfo(id, x, "path")
+        musicInfos.append(m)
+        id += 1
+    return musicInfos
             
 
 class MusicInfo(Base):

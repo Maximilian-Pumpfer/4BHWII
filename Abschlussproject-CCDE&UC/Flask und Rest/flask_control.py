@@ -46,17 +46,23 @@ def on_connect(client, userdata, flags, rc, properties=None):
 
 # print message, useful for checking if it was successful
 allSongs = []
+neededSongs = []
+songsReceived = False
 
 def on_message(client, userdata, msg):
+    neededSongs.clear()
     received = msg.payload.decode("utf-8").split("-");
-    if(received[0] != "main"):
-        print(received[0] + ": " + received[1])
-        received[1].replace("[", "")
-        received[1].replace("]", "")        
-        received[1].replace("'", "")
-        allSongs = received[1].split(",")
+    if(received[0] != "test"):
+        received[1] = received[1].replace("[", "")
+        received[1] = received[1].replace("]", "") 
+        received[1] = received[1].replace("'", "")      
+        received[1] = received[1].replace(".mp3", "")
+        allSongs = received[1].split(", ")
         for s in allSongs:
             print(s)
+            neededSongs.append(s)
+        songsReceived = True
+        #runInputs(songsReceived, allSongs)
 # def on_log(client,userdata,level,buff):
 #     print(buff)  
 
@@ -85,10 +91,10 @@ client.subscribe("pro/music", qos=1)
 
 #client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-play-Everything_Black.mp3", qos=1)
 
-#client.loop_start()
-#time.sleep(10)
-#client.loop_stop()
-client.loop_forever()
+client.loop_start()
+time.sleep(1)
+client.loop_stop()
+#client.loop_forever()
 
 app = Flask(__name__)
 app.secret_key = "epjsmp2021/22"
@@ -100,18 +106,22 @@ def start():
 
 @app.route('/songs')
 def showSongs():
-    return render_template("songs.html", songs = getMusicInfo())
+    #return render_template("songs.html", songs = getMusicInfoLocal())
+    client.loop_start()
+    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)
+    client.loop_stop()
+    return render_template("songs.html", songs = getMusicInfo(neededSongs))
 
 @app.route('/play')
 @app.route('/play/<name>')
 def play(name):
     print(name)
     client.loop_start()
-    client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-play-" + name, qos=1)
+    client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-play-" + name+".mp3", qos=1)
     client.loop_stop()
-    mixer.init()
-    mixer.music.load(name)
-    mixer.music.play()
+    #mixer.init()
+    #mixer.music.load(name)
+    #mixer.music.play()
     return render_template("play.html")
 
 @app.route('/stop')
@@ -120,7 +130,7 @@ def stop():
     client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-" + "stop", qos=1)
     #time.sleep(1)
     client.loop_stop()
-    mixer.music.stop()
+    #mixer.music.stop()
     return render_template("play.html")
 
 @app.route('/pause')
@@ -128,7 +138,7 @@ def pause():
     client.loop_start()
     client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-" + "pause", qos=1)
     client.loop_stop()
-    mixer.music.pause()
+    #mixer.music.pause()
     return render_template("play.html")
 
 @app.route('/unpause')
@@ -136,7 +146,7 @@ def unpause():
     client.loop_start()
     client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-" + "unpause", qos=1)
     client.loop_stop()
-    mixer.music.unpause()
+    #mixer.music.unpause()
     return render_template("play.html")  
 
 api.add_resource(Service, "/rest/<int:id>")
