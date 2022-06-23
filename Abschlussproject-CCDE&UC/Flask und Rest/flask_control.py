@@ -108,7 +108,8 @@ def start():
 def showSongs():
     #return render_template("songs.html", songs = getMusicInfoLocal())
     client.loop_start()
-    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)
+    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)#gibt falsche daten zurück (nicht songs, sondern received oder getSongs) ==> checken
+    time.sleep(1)
     client.loop_stop()
     return render_template("songs.html", songs = getMusicInfo(neededSongs))
 
