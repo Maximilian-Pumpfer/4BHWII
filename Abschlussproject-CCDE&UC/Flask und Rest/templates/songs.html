@@ -18,7 +18,12 @@
             <td>{{s.id}}</td>
             <td>{{s.name}}</td>
             <td>{{s.path}}</td>
-            <td><a class="btn btn-primary" href="/play/{{s.id}}" role="button">Play</a></td>
+            <td><a class="btn btn-primary" href="/play/{{s.name}}" role="button">Play</a>
+                <!--<input type="submit" name="submit" value="{{s.name}}">-->
+            </td>
+            <td><a class="btn btn-primary" href="/stop/{{s.name}}" role="button">Stop</a>
+                <!--<input type="submit" name="submit" value="{{s.name}}">-->
+            </td>
         </tr>
         {% endfor %}
     </tbody>

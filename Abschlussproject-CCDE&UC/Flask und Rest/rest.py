@@ -58,7 +58,18 @@ class MusicInfo(Base):
             "NAME" : self.name,
             "PATH" : self.PATH
         }
+  
+class SongInfo:
+    def __init__(self, id, name, path):
+        self.id = id
+        self.name = name
+        self.path = path
+        
+    def __str__(self):
+        return str(self.id)+" | "+self.name+" | "+self.path
     
+    def serialize(self):
+        return {"id": self.id, "name":self.name, "path":self.path}
     
 class Service(Resource):
     def get(self, id):
