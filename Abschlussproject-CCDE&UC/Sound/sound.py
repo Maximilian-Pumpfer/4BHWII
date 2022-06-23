@@ -8,7 +8,8 @@ from pygame import mixer
 
 mixer.init()
 #mixer.music.load("ChildrenOfTheOmnissiah.mp3")
-mixer.music.load("/home/pi/Music/Everything Black.mp3")#https://github.com/pygame/pygame/issues/2785
+song = "/home/pi/Music/Everything Black.mp3"
+mixer.music.load(song)#https://github.com/pygame/pygame/issues/2785
 #mixer.music.set_volume(0.5)
 #mixer.music.play()
 def isFloat(num):
@@ -19,7 +20,7 @@ def isFloat(num):
         return False
 
 while True:
-    query = input("INPUT: ");
+    query = input("INPUT: ")
     if(query == "stop"):
         mixer.music.stop()
         break
