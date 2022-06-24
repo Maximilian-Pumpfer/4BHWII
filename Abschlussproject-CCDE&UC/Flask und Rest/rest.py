@@ -1,4 +1,5 @@
 import datetime
+import json
 import os
 from flask import Flask, request,jsonify
 from flask_restful import Resource, Api
@@ -83,17 +84,17 @@ class SongInfo:
     
 class Service(Resource):
     def get(self, id):
-        #get all songs
         music = MusicInfo.query.get(id)
         if not music:
             return jsonify({"message" : "does not exist"})
         return music.serialize()
     
     def put(self, id):
-        #play song
-        music = MusicInfo.query.get(id)
-        if request.form["EXTENSION"] not in ALLOWED_EXTENSIONS:
-            return jsonify({"Message" : "extension is wrong"})
+        data = request.get_json(force=True)['info']
+        info=MusicInfo(name=data['name'], path=data['path'])
+        db_session.add(info)
+        db_session.flush()
+        return jsonify(info)
         
     def delete(self, id):
         music = MusicInfo.query.get(id)
@@ -101,6 +102,7 @@ class Service(Resource):
             return jsonify({"message" : "file with this id does not exist %s" %id})
         db_session.delete(music)
         db_session.flush()
+        return jsonify(music)
         
     def getByName(self, name):
         music = MusicInfo.query.get(name)
@@ -109,11 +111,18 @@ class Service(Resource):
         return music.serialize()
     
     def patch(self, id):
-        return {"Result":"Nicht erfolgreich geändert!"}
+        music = MusicInfo.query.get(id)
+        if music is None:
+            return jsonify({'message': 'object with id %d does not exist'%id})
+        data = json.loads(request.json['info'])
+        if 'name' in data:
+            music.name = data['name']
+        if 'path' in data:
+            music.path = data['path']
+        db_session.add(music)
+        db_session.flush()
+        return jsonify({'message':'object with id %d modified'%id})
     
-    def post(self, id):
-        #change volume
-        return {"Result":"Daten konnten nicht gesendet werden"}
     
 api.add_resource(Service, "/file/<string:id>")
 

@@ -3,7 +3,7 @@ from flask_restful import Api
 from requests import request
 #from model import Question, getRandomQuestion, getData, Service, AllQuests, getQuests
 from rest import MusicInfo, Service, getMusicInfo
-from flask import Flask, render_template, session
+from flask import Flask, render_template, session, request
 from pygame import mixer
 import time
 import paho.mqtt.client as paho
@@ -51,7 +51,7 @@ songsReceived = False
 def on_message(client, userdata, msg):
     neededSongs.clear()
     received = msg.payload.decode("utf-8").split("-");
-    if(received[0] != "test"):
+    if("songs" in received[0]):
         received[1] = received[1].replace("[", "")
         received[1] = received[1].replace("]", "") 
         received[1] = received[1].replace("'", "")      
@@ -59,7 +59,9 @@ def on_message(client, userdata, msg):
         allSongs = received[1].split(", ")
         for s in allSongs:
             print(s)
+            
             neededSongs.append(s)
+            
         songsReceived = True
         #runInputs(songsReceived, allSongs)
 # def on_log(client,userdata,level,buff):
@@ -122,7 +124,12 @@ def play(name):
     #mixer.init()
     #mixer.music.load(name)
     #mixer.music.play()
-    return render_template("play.html")
+    time.sleep(0.1)
+    client.loop_start()
+    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)#gibt falsche daten zurück (nicht songs, sondern received oder getSongs) ==> checken
+    time.sleep(0.1)
+    client.loop_stop()
+    return render_template("songs.html", songs=getMusicInfo(neededSongs))
 
 @app.route('/stop')
 def stop():
@@ -130,24 +137,58 @@ def stop():
     client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-" + "stop", qos=1)
     #time.sleep(1)
     client.loop_stop()
+    time.sleep(0.1)
+    client.loop_start()
+    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)#gibt falsche daten zurück (nicht songs, sondern received oder getSongs) ==> checken
+    time.sleep(0.1)
+    client.loop_stop()
     #mixer.music.stop()
-    return render_template("play.html")
+    return render_template("songs.html", songs=getMusicInfo(neededSongs))
 
 @app.route('/pause')
 def pause():
     client.loop_start()
     client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-" + "pause", qos=1)
     client.loop_stop()
+    time.sleep(0.1)
+    client.loop_start()
+    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)#gibt falsche daten zurück (nicht songs, sondern received oder getSongs) ==> checken
+    time.sleep(1)
+    client.loop_stop()
     #mixer.music.pause()
-    return render_template("play.html")
+    return render_template("songs.html", songs=getMusicInfo(neededSongs))
 
 @app.route('/unpause')
 def unpause():
     client.loop_start()
     client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-" + "unpause", qos=1)
     client.loop_stop()
+    time.sleep(0.1)
+    client.loop_start()
+    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)#gibt falsche daten zurück (nicht songs, sondern received oder getSongs) ==> checken
+    time.sleep(1)
+    client.loop_stop()
     #mixer.music.unpause()
-    return render_template("play.html")  
+    return render_template("songs.html", songs=getMusicInfo(neededSongs))  
+
+@app.route('/volume')
+@app.route('/volume/<volume>')
+def volume(volume):
+    #volume=request.args["rangeval"]
+    print(volume)
+    val = float(volume)
+    valPyGame = val/100
+    client.loop_start()
+    
+    client.publish("pro/music", payload = client._client_id.decode("utf-8") + "-"+str(valPyGame), qos=1)
+    client.loop_stop()
+    time.sleep(1)
+    client.loop_start()
+    client.publish("pro/music", payload=client._client_id.decode("utf-8") + "-getSongs", qos=1)#gibt falsche daten zurück (nicht songs, sondern received oder getSongs) ==> checken
+    time.sleep(1)
+    client.loop_stop()
+    print(valPyGame)
+    return render_template("songs.html", songs = getMusicInfo(neededSongs))
 
 #TODO: Sound ändern einfügen
 
